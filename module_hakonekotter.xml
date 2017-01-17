@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_hakonekotter" default="compile.module.hakonekotter">
+  <dirname property="module.hakonekotter.basedir" file="${ant.file.module_hakonekotter}"/>
+  
+  <property name="module.jdk.home.hakonekotter" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.hakonekotter" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.hakonekotter" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.hakonekotter" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="hakonekotter.output.dir" value="${module.hakonekotter.basedir}/out/production/hakonekotter"/>
+  <property name="hakonekotter.testoutput.dir" value="${module.hakonekotter.basedir}/out/test/hakonekotter"/>
+  
+  <path id="hakonekotter.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="hakonekotter.module.production.classpath">
+    <path refid="${module.jdk.classpath.hakonekotter}"/>
+    <path refid="library.twitter4j-async-4.0.4.classpath"/>
+  </path>
+  
+  <path id="hakonekotter.runtime.production.module.classpath">
+    <pathelement location="${hakonekotter.output.dir}"/>
+    <path refid="library.twitter4j-async-4.0.4.classpath"/>
+  </path>
+  
+  <path id="hakonekotter.module.classpath">
+    <path refid="${module.jdk.classpath.hakonekotter}"/>
+    <pathelement location="${hakonekotter.output.dir}"/>
+    <path refid="library.twitter4j-async-4.0.4.classpath"/>
+  </path>
+  
+  <path id="hakonekotter.runtime.module.classpath">
+    <pathelement location="${hakonekotter.testoutput.dir}"/>
+    <pathelement location="${hakonekotter.output.dir}"/>
+    <path refid="library.twitter4j-async-4.0.4.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.hakonekotter">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.hakonekotter">
+    <patternset refid="excluded.from.module.hakonekotter"/>
+  </patternset>
+  
+  <path id="hakonekotter.module.sourcepath">
+    <dirset dir="${module.hakonekotter.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.hakonekotter" depends="compile.module.hakonekotter.production,compile.module.hakonekotter.tests" description="Compile module hakonekotter"/>
+  
+  <target name="compile.module.hakonekotter.production" depends="register.custom.compilers" description="Compile module hakonekotter; production classes">
+    <mkdir dir="${hakonekotter.output.dir}"/>
+    <javac2 destdir="${hakonekotter.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.hakonekotter}/javac">
+      <compilerarg line="${compiler.args.hakonekotter}"/>
+      <bootclasspath refid="hakonekotter.module.bootclasspath"/>
+      <classpath refid="hakonekotter.module.production.classpath"/>
+      <src refid="hakonekotter.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.hakonekotter"/>
+    </javac2>
+    
+    <copy todir="${hakonekotter.output.dir}">
+      <fileset dir="${module.hakonekotter.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.hakonekotter.tests" depends="register.custom.compilers,compile.module.hakonekotter.production" description="compile module hakonekotter; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.hakonekotter" description="cleanup module">
+    <delete dir="${hakonekotter.output.dir}"/>
+    <delete dir="${hakonekotter.testoutput.dir}"/>
+  </target>
+</project>
